@@ -1,0 +1,42 @@
+@import "../../common/style/common";
+
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px;
+}
+
+.header{
+  background: white;
+  padding: {
+    top:0;
+    bottom:0;
+    left:0;
+    right:24px;
+  };
+  @include flex-center(row,space-between);
+}
+.content{
+  margin: 24px 16px;
+  padding: 24px;
+  background: #fff;
+  min-height: 280px;
+}
+.exit-btn{
+  color: $blue;
+  margin-left: 10px;
+  font-size: $text-weak-size;
+  cursor: pointer;
+}

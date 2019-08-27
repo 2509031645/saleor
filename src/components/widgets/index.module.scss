@@ -1,0 +1,16 @@
+@import "../../common/style/common";
+
+.notfound-wrapper {
+  height: 100%;
+  @include flex-center(column);
+
+  .notfound-notice {
+    font-size: $text-title-size;
+    color: $text-title-color;
+
+    .link-text {
+      color: $blue;
+      cursor: pointer;
+    }
+  }
+}

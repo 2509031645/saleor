@@ -1,0 +1,24 @@
+@import "../../common/style/_common.scss";
+
+.wrapper{
+  @include flex-center();
+  @include text-default;
+  height:100%;
+  .container{
+    flex:1;
+    background: white;
+    height:500px;
+    padding: 50px;
+    @include box-sizing();
+    @include flex-center();
+    .login-form{
+      width:350px;
+      background:white;
+      padding:50px 20px;
+      @include rounded(5px);
+      .login-form-button{
+        width:100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,47 @@
+@import "../../common/style/_common.scss";
+
+.wrapper{
+  @include flex-center();
+  @include text-default;
+  height:100%;
+  .container{
+    flex:1;
+    background-image: url("/img/login_bg.jpg");
+    background-size: cover;
+    height:500px;
+    padding: 10vw;
+    @include box-sizing();
+    @include flex-center(row-reverse,space-between);
+    .login-form{
+      width:350px;
+      background:white;
+      padding:50px 20px;
+      @include rounded(5px);
+      .login-form-button{
+        width:100%;
+      }
+    }
+  }
+
+}
+.platform-switch{
+  @include flex-center(row,space-around);
+  .platform-icon{
+    font-size:26px;
+    color: $blue;
+  }
+  .platform-cell{
+    width:150px;
+    height:150px;
+    text-align: center;
+    border: 1px solid #e2e2e26b;
+    @include flex-center(column);
+    @include rounded(5px);
+    cursor: pointer;
+    &:hover{
+      @include shadow-inset(0,4px,8px,rgba(0,0,0,0.2));
+      @include shadow(0,6px,20px,rgba(0,0,0,0.19));
+      // box-shadow:  0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19)
+    }
+  }
+}
