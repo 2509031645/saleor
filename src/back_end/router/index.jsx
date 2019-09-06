@@ -7,13 +7,17 @@
 
 import React from "react";
 import {Route, Switch, Redirect} from "react-router-dom";
-import staticMenu from "../../config/staticMenu";
+import staticMenu from "@/config/staticMenu";
 
-const getPathList = () => {
+type Props = {
+    user_menu_list: Array<any>
+}
+
+const getPathList = (user_menu_list) => {
     let routeArr = [];
     const recursionRoute = (routeList) => {
         routeList.forEach(item => {
-            routeArr.push({
+            [2,3].indexOf(item.pagetype) > -1 && routeArr.push({
                 path: item.path,
                 component: item.component,
                 exact: !(item.children && item.children.length)
@@ -21,7 +25,7 @@ const getPathList = () => {
             item.children && item.children.length && recursionRoute(item.children)
         })
     };
-    recursionRoute(staticMenu);
+    recursionRoute(user_menu_list);
     return routeArr;
 };
 
@@ -29,15 +33,23 @@ const RedirectAs404 = ({location}) => {
     return <Redirect to={Object.assign({}, location, {state: {is404: true}})}/>
 };
 
-function FrontEndRouter() {
+
+function BackgroundEndRouter({user_menu_list}: Props) {
     return (
         <Switch>
             {
-                getPathList().map(item => item.path ? <Route path={item.path} key={item.path} exact={item.exact} component={require(`../${item.component}/index`).default}/> : null)
+                getPathList(user_menu_list.concat(staticMenu)).map(item => item.path && item.component ?
+                    <Route
+                        path={item.path}
+                        key={item.path}
+                        exact={item.exact}
+                        component={require(`../${item.component}/index`).default}
+                    /> : null)
             }
             <Route component={RedirectAs404}/>
         </Switch>
     );
 }
 
-export default FrontEndRouter;
+
+export default BackgroundEndRouter;

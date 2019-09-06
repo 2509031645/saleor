@@ -1,0 +1,6 @@
+@import '../../common/style/common';
+
+.home-wrapper{
+  height:100%;
+  @include flex-center()
+}

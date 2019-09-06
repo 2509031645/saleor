@@ -23,7 +23,7 @@ type schemeOption = {
 type Props = {}
 type State = {}
 const confirm = Modal.confirm;
-const FormScheme = ({stateKeys, actions}: schemeOption) => {
+const FormScheme = ({stateKeys, actionKeys}: schemeOption) => {
     return (ChildrenForm: React.Node) => {
         class FormSchemeSup extends React.Component<Props, State> {
             constructor() {
@@ -32,7 +32,7 @@ const FormScheme = ({stateKeys, actions}: schemeOption) => {
                     dataList: [],//表格列表数据
                     detailData: null,
                     total: 0,//数据总数
-                    pageSize: 10,
+                    pageSize: 15,
                     page: 1,
                     selectedRowKeys: [],// 表格里选中的item
                     useDefault: true,
@@ -53,7 +53,7 @@ const FormScheme = ({stateKeys, actions}: schemeOption) => {
 
             formIns = null;//子表单实例
             componentDidMount() {
-                // console.log(this.formIns);
+                console.log(this.formIns);
             }
 
             // 查询 重置页码
@@ -64,24 +64,23 @@ const FormScheme = ({stateKeys, actions}: schemeOption) => {
             };
 
             // 获取列表数据
-            getList = (apiKey) => {
+            getList = (actionKey) => {
                 //!this.searchApiKey.length && (this.searchApiKey = apiKey);// 存储apiKey 文件内部调用时候不用继续赋值
-                apiKey && (this.searchApiKey = apiKey);// 存储apiKey 文件内部调用时候不用继续赋值
+                actionKey && (this.searchApiKey = actionKey);// 存储apiKey 文件内部调用时候不用继续赋值
                 const {formatFields, searchForm} = this.formIns;
                 const {pageSize, page} = this.state;
-                searchForm.validateFields((errList, fields) => {
-                    //是否需要格式化表单数据
-                    typeof formatFields === 'function' && (fields = formatFields(fields));
-                    if (!errList) {
-                        getApiByKey(Api, this.searchApiKey)({...fields, size: pageSize, page}).then(res => {
-                            this.setState({
-                                dataList: res.data.list || res.data.menu,
-                                total: res.data.total
-                                //  selectedRowKeys: []
-                            });
-                        });
-                    }
-                });
+                if (searchForm) {
+                    searchForm.validateFields((errList, fields) => {
+                        //是否需要格式化表单数据
+                        typeof formatFields === 'function' && (fields = formatFields(fields));
+                        if (!errList) {
+                            this.formIns.props[this.searchApiKey]({...fields, pageSize, page})
+                        }
+                    });
+                } else {
+                    this.formIns.props[this.searchApiKey]({...formatFields(), pageSize, page})
+                }
+
             };
 
             //重置
@@ -92,7 +91,6 @@ const FormScheme = ({stateKeys, actions}: schemeOption) => {
 
             // 导出
             exportList = ({apiKey, param}) => {
-                console.log(param);
                 getApiByKey(Api, apiKey)(param).then(res => {
                     downloadFile(res);
                 });
@@ -261,7 +259,7 @@ const FormScheme = ({stateKeys, actions}: schemeOption) => {
             * @param config ['rowSelection'] //数组中包含的选项则在table中不展示
             * */
             tableConfig = (config = [], option = {}) => {
-                const {total, dataList, pageSize, page, selectedRowKeys, useDefault} = this.state;
+                const {pageSize, page, selectedRowKeys, useDefault} = this.state;
                 const defaultSelectedKeys = option.rowSelection ? option.rowSelection.defaultSelectedKeys || [] : [];
                 const rowSelection = {
                     onChange: (selectedRowKeys, selectedRows) => {
@@ -285,14 +283,18 @@ const FormScheme = ({stateKeys, actions}: schemeOption) => {
                         showSizeChanger: config.indexOf('showSizeChanger') === -1,
                         onShowSizeChange: this.onShowSizeChange,
                         pageSize: pageSize,
-                        total: total,
+                        total: option.total,
                         current: page,
                         onChange: this.onPageChange,
                         showQuickJumper: config.indexOf('showQuickJumper') === -1,
                         showTotal: config.indexOf('showTotal') === -1 ? showTotal : false
-                    } : false
+                    } : false,
+                    rowKey: 'id',
+                    scroll: {y: 580},
+                    size: 'small',
+                    loading:option.loading
                 };
-                config.indexOf('dataSource') === -1 && (tableConfigObj.dataSource = dataList);
+                config.indexOf('dataSource') === -1 && (tableConfigObj.dataSource = option.list);
                 return tableConfigObj;
             };
 
@@ -377,7 +379,7 @@ const FormScheme = ({stateKeys, actions}: schemeOption) => {
         };
         const mapDispatchToProps: any = dispatch => {
             let combineAction = {};
-            actions.forEach(item => {
+            actionKeys.forEach(item => {
                 combineAction[item] = param => {
                     dispatch({
                         type: item,

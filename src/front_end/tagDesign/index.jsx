@@ -5,6 +5,9 @@
 */
 // @flow
 import React, {Component} from 'react';
+import TagView from "./tagView";
+import TagDetail from "./tagDetail";
+import style from './index.module.scss';
 
 class TagDesign extends Component {
     constructor(props){
@@ -16,8 +19,14 @@ class TagDesign extends Component {
 
     render(){
         return (
-            <div>
-                定制标签
+            <div className={style.wrapper}>
+                <div className={style['cell-container']}>
+                    <TagView />
+                    <TagDetail />
+                </div>
+                <div>
+                    内容区域
+                </div>
             </div>
         )
     }

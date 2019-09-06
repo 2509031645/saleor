@@ -5,8 +5,7 @@
 */
 // @flow
 import {postRequest} from "../source";
-import {baseUrl} from "../../../config";
 
 export default {
-    register: (param:any) => postRequest({url:baseUrl + '/graphql/',param,isJson:true})
+    register: (param:any) => postRequest({url:'/api/regUser',param})
 }

@@ -24,7 +24,8 @@ axios.interceptors.request.use(
             config.headers['Authorization'] = `Bearer ${token}`; // 请求头携带token
         }
         config.timeout = 300000;
-        config.baseURL = baseUrl;
+        // fixme: 注意环境！！！！
+        // config.baseURL = baseUrl;
         return config;
     },
     error => {
@@ -37,11 +38,14 @@ axios.interceptors.response.use(
             case 404 :
                 message.error('服务器被吃了⊙﹏⊙‖');
                 throw new Error('404');
+            case 304 :
+                message.error('重定向⊙﹏⊙‖');
+                throw new Error('304');
             default :
                 break;
         }
         //判断状态码
-        if (response.data.code && response.data.code !== 0) {
+        if (response.data.status && response.data.status !== 'success') {
             message.error(response.data.msg);
             // throw new Error(response.data.msg);
             // code为19时，后台提示重新登陆，前端清除缓存，刷新页面
@@ -51,7 +55,7 @@ axios.interceptors.response.use(
                 window.location.reload();
             }
         }
-        return response.data;
+        return response;
     },
     error => {
         // 对响应错误做点什么
@@ -73,7 +77,18 @@ export const postRequest = (option:optionType) => {
         {
             cancelToken: source.token,
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                ...option.headers
+            },
+            responseType: option.responseType || 'json'
+        });
+};
+export const putRequest = (option:optionType) => {
+    return axios.put(option.url, option.isJson ? option.param : qs.stringify(option.param),
+        {
+            cancelToken: source.token,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
                 ...option.headers
             },
             responseType: option.responseType || 'json'

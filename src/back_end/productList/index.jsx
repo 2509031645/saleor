@@ -8,9 +8,13 @@ import React, {Component} from 'react';
 import FormGenerator from '@/components/form/formGenerator';
 import FormScheme from '@/components/form/formScheme';
 import {Button} from 'antd';
+import {postRequest} from "@/common/api/source";
 import Api from '@/common/api';
 
-type Props = {}
+type Props = {
+    getProductList(): viod,
+    product_list: Array<any>
+}
 type State = {
     fieldList: Array<Object>
 }
@@ -36,22 +40,36 @@ class ProductList extends Component<Props, State> {
     };
 
     componentDidMount(): * {
-        Api.login.hello().then(res => {
+        /*Api.login.hello().then(res => {
             console.log(res);
-        });
+        });*/
+        postRequest({
+            url: '/api/login', param: {
+                username: 'admin168',
+                password: 123
+            }
+        }).then(res => {
+            console.log(res);
+        })
         //return super.componentDidMount();
+    }
+
+    componentDidCatch(error, info) {
+    debugger;
     }
 
     render() {
         const {fieldList} = this.state;
-        const {getProductList,product_list} = this.props;
+        const {getProductList, product_list} = this.props;
 
         console.log(product_list);
         return (
             <div>
                 <FormGenerator fieldList={fieldList} onFormInit={this.onFormInit}/>
                 <div>
-                    <Button onClick={() => {getProductList({name:'999'})}}>查询</Button>
+                    <Button onClick={() => {
+                        getProductList({name: '999'})
+                    }}>查询</Button>
                 </div>
             </div>
         )
@@ -60,5 +78,5 @@ class ProductList extends Component<Props, State> {
 
 export default FormScheme({
     stateKeys: ['product_list'],
-    actions: ['getProductList']
+    actionKeys: ['getProductList']
 })(ProductList);

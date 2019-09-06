@@ -25,3 +25,30 @@ li{list-style:none}
 img{border:0;vertical-align:middle}
 table{border-collapse:collapse;border-spacing:0}
 p{word-wrap:break-word}
+
+
+.table-container{
+  padding-top:20px;
+  border-top:1px solid rgba(0,0,0,0.2);
+  margin-top:30px;
+}
+
+.btn-container{
+  margin-top:20px;
+}
+.swiper-slide-thumb-active::before{
+  content: "";
+  background: transparent!important;
+}
+.swipe-button-prev{
+  position: absolute;
+  left:10px;
+  top:150px;
+  z-index: 1;
+}
+.swipe-button-next{
+  position: absolute;
+  right:10px;
+  top:150px;
+  z-index: 1;
+}

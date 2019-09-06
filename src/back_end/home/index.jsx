@@ -5,6 +5,7 @@
 */
 // @flow
 import React, {Component} from 'react';
+import style from './index.module.scss';
 
 type Props = {
 
@@ -22,8 +23,8 @@ class Home extends Component<Props,State>{
 
     render(){
         return(
-            <div>
-                后台首页
+            <div className={style['home-wrapper']}>
+                <img src="/img/be_home.jpeg" alt=""/>
             </div>
         )
     }

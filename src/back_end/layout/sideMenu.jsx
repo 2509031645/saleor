@@ -7,8 +7,8 @@
 import React, {Component} from 'react';
 import style from "./index.module.scss";
 import {Layout, Icon, Menu} from "antd";
-import menuArr from '../../config/staticMenu';
 import {withRouter} from "react-router-dom";
+import staticMenu from "@/config/staticMenu";
 
 const {Sider} = Layout;
 const {SubMenu} = Menu;
@@ -27,19 +27,24 @@ class SideMenu extends Component<Props,State> {
     }
 
     switchRoute = (pathObject:any) => {
-        this.props.history.push(pathObject.path);
+        if(!pathObject.path) return;
+        document.title = pathObject.name;
+        this.props.history.push(pathObject.path || '/404');
     };
 
     // 递归菜单数据
     recursionMenu = (menuArr) => {
         return menuArr.map(item => {
                 let isRoot = !!(item.children && item.children.length);
+                if([0,2,3].indexOf(item.pagetype) === -1){
+                    return null;
+                }
                 return isRoot ?
                     <SubMenu
-                        key={item.menuId}
+                        key={item.id}
                         title={
                             <span>
-                                <Icon type={item.icon}/>
+                                {item.iconCls && <Icon type={item.iconCls}/>}
                                 <span>{item.name}</span>
                               </span>
                         }>
@@ -47,19 +52,19 @@ class SideMenu extends Component<Props,State> {
                             this.recursionMenu(item.children)
                         }
                     </SubMenu> :
-                    <Menu.Item key={item.menuId} onClick={() => this.switchRoute(item)}><Icon type={item.icon}/><span>{item.name}</span></Menu.Item>
+                    <Menu.Item key={item.path} onClick={() => this.switchRoute(item)}>{item.iconCls && <Icon type={item.iconCls}/>}<span>{item.name}</span></Menu.Item>
             }
         );
     };
 
     render() {
-        const {collapsed} = this.props;
+        const {collapsed,user_menu_list} = this.props;
         return (
             <Sider trigger={null} collapsible collapsed={collapsed}>
                 <div className={style.logo}/>
-                <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+                <Menu theme="dark" mode="inline" defaultOpenKeys={[this.props.match.url]} defaultSelectedKeys={[this.props.location.pathname]}>
                     {
-                        this.recursionMenu(menuArr)
+                        this.recursionMenu(staticMenu.concat(user_menu_list).filter(item => !item.hideInMenu))
                     }
                 </Menu>
             </Sider>

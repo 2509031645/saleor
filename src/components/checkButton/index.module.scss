@@ -1,0 +1,45 @@
+@import "../../common/style/common";
+
+.wrapper{
+  @include flex-center(row,left);
+  .btn-cell{
+    border:2px solid transparent;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+  .btn-cell-active{
+    @extend .btn-cell;
+    border:2px solid $yellow;
+    position: relative;
+    &::after{
+      content: "";
+      display: block;
+      position: absolute;
+      right:0;
+      bottom:0;
+      border-right: 18px solid $yellow;
+      border-top: 15px solid transparent;
+    }
+    &::before{
+      font-family: iconfont;
+      content: "\e6c6";
+      color:white;
+      font-size: 22px;
+      position: absolute;
+      right:-6px;
+      bottom:-13px;
+      //color: white;
+      z-index: 1;
+    }
+  }
+  .btn-cell-disabled{
+    @extend .btn-cell;
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+  .cell-inner{
+    margin:2px;
+    padding: 0 10px;
+  }
+}

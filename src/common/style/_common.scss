@@ -3,6 +3,8 @@
 */
 
 $blue: #40a9ff;
+$gray: #e5e5e5;
+$red: red;
 $yellow: #FFA726; // 主色
 $text-link-color: #1890ff;
 $text-title-color: rgba(0, 0, 0, 0.8);
@@ -16,6 +18,17 @@ $text-weak-size: 12px;
 
 $main-width: 1200px; // 主视口宽度
 
+/*
+  公用类名
+*/
+
+.red{
+  color: $red;
+  &:hover{
+    color: $red;
+    opacity: 0.8;
+  }
+}
 
 // mixin
 

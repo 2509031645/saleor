@@ -39,7 +39,7 @@ class PopOver extends Component<Props, State> {
         this.timer = setTimeout(() => {
             const oldClassName = this.state.wrapperClassName;
             this.setState(val => ({
-                wrapperClassName:`animated zoomOut faster ${style.wrapper}`
+                wrapperClassName:`animated fadeOutDown faster ${style.wrapper}`
             }),() => {
                 this.state.wrapperClassName !== oldClassName && this.props.onChange()
             });
@@ -57,11 +57,13 @@ class PopOver extends Component<Props, State> {
                 this.setState(val => ({
                     wrapperStyle: {
                         ...val.wrapperStyle,
-                        left: val.wrapperStyle.left || offsetLeft + offsetWidth / 2 - width / 2,
-                        top: val.wrapperStyle.top || offsetTop + offsetHeight + 10,
+                        /*left: val.wrapperStyle.left || offsetLeft + offsetWidth / 2 - width / 2,
+                        top: val.wrapperStyle.top || offsetTop + offsetHeight + 10,*/
+                        left: offsetLeft + offsetWidth / 2 - width / 2,
+                        top: offsetTop + offsetHeight + 10,
                         display: 'block',
                     },
-                    wrapperClassName: `animated zoomIn faster ${style.wrapper}`
+                    wrapperClassName: `animated fadeInUp faster ${style.wrapper}`
                 }),() => {
                     this.state.wrapperClassName !== oldClassName && onChange()
                 });

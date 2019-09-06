@@ -1,0 +1,72 @@
+@import "../../common/style/common";
+
+.wrapper {
+  .cell-container {
+    @include flex-center(row, space-between, top);
+
+    .view-container {
+      width: 450px;
+      background: white;
+      overflow: hidden;
+
+      .view-cell {
+        background: white;
+        @include flex-center();
+        height: auto;
+
+        img {
+          width: 100%
+        }
+      }
+
+      .view-thumb-cell {
+        @extend .view-cell;
+        background: black;
+
+        &::before {
+          content: "";
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          display: inline-block;
+          background: rgba(0, 0, 0, 0.5);
+        }
+      }
+
+      .thumbs {
+        background: black;
+        padding: 5px;
+      }
+
+      .pg-bt {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        @include rounded(50%);
+        background: rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.5);
+        }
+      }
+    }
+
+    .detail-container {
+      flex: 1;
+      background: white;
+      margin-left: 20px;
+      padding: 20px;
+
+      .check-cell {
+        @include flex-center(row, left);
+        margin-bottom: 15px;
+        .check-cell-label{
+          width:80px;
+          text-align: right;
+        }
+      }
+    }
+  }
+}

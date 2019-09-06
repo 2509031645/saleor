@@ -8,61 +8,90 @@ import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import query from "../../config/query";
-import { Form, Icon, Input, Button, Modal } from 'antd';
+import {Form, Icon, Input, Button, Modal} from 'antd';
 import style from './index.module.scss';
 import type {RouterHistory} from 'react-router-dom';
 import type {WrappedFormUtils} from 'antd';
 import CopyRight from "../../components/copyright";
+import Loading from '@/components/widgets/loading';
 
 type Props = {
-    login(param:any): void,
-    form:WrappedFormUtils,
-    login_result:any,
+    login(param: any): void,
+    form: WrappedFormUtils,
+    login_result: any,
     history: RouterHistory
 }
 type State = {
-    modalInfo:any
+    modalInfo: any
 }
-class Login extends Component<Props,State>{
-    constructor(props){
+
+class Login extends Component<Props, State> {
+    constructor(props) {
         super(props);
         this.state = {
-            modalInfo:{
+            modalInfo: {
                 visible: false,
-                title:''
+                title: '',
             }
         }
     }
-    handleSubmit = (e:SyntheticEvent<>) => {
+
+    handleSubmit = (e: SyntheticEvent<>) => {
         e.preventDefault();
-        this.props.form.validateFields((errList,fieldList) => {
-            if(!errList){
-                this.openLoginTypeModal(); // fixme:有接口了以后要写到返回状态里
-                this.props.login({"operationName":"TokenAuth","query":query.login,variables:{email: fieldList.email, password: fieldList.password}})
+        this.props.form.validateFields((errList, fieldList) => {
+            if (!errList) {
+                this.props.login({username: fieldList.username, password: fieldList.password})
             }
         });
     };
+
     componentWillMount(): * {
         // return super.componentWillMount();
+        this.props.get_user_from_local(JSON.parse(localStorage.getItem('user_info')));
+        this.props.get_menu_from_local(JSON.parse(localStorage.getItem('menu_list')));
+        this.loginTyped(this.props);
     }
 
     componentWillReceiveProps(nextProps: Props, nextContext: *): * {
-        /*if(nextProps.login_result.token && nextProps.login_result.isStaff){
-            this.props.history.push('/FE/home');
+        // fixme: 超时登陆的暂时处理方法
+        if(nextProps.user_menu_list.status === 'error'){
+            localStorage.removeItem('user_info');
+            localStorage.removeItem('menu_list')
         }
-        if(nextProps.login_result.token && !nextProps.login_result.isStaff){
-            this.props.history.push('/BE/home');
-        }*/
+        // 如果登陆成功去获取菜单
+        if (nextProps.login_result.data.status === 'success' && nextProps.user_menu_list.status !== 'success') {
+            this.props.get_menu_by_user_id({userId: nextProps.login_result.data.msg.id})
+        } else {
+            this.loginTyped(nextProps);
+        }
         // return super.componentWillReceiveProps(nextProps, nextContext);
     }
 
+    loginTyped = ({user_menu_list, login_result}) => {
+        if (login_result.data.status === 'success' && user_menu_list.status === 'success') {
+            switch (login_result.data.msg.pagetype) {  //页面展示类型 默认1 前端 2后端 3前后端可选
+                case 1:
+                    this.toPage('/FE/home');
+                    break;
+                case 2:
+                    this.toPage('/BE/home');
+                    break;
+                case 3:
+                    this.openLoginTypeModal();
+                    break;
+            }
+            localStorage.setItem("user_info", JSON.stringify(login_result.data));
+            localStorage.setItem("user_menu_list", JSON.stringify(user_menu_list))
+        }
+    };
+
     openLoginTypeModal = () => {
         this.setState(val => ({
-            modalInfo:{
+            modalInfo: {
                 ...val.modalInfo,
                 visible: true,
-                title: '请选择平台',
-                footer:[]
+                title: '登录成功，请选择平台',
+                footer: []
             }
         }))
     };
@@ -80,31 +109,37 @@ class Login extends Component<Props,State>{
         this.props.history.push(path)
     };
 
-    render(){
-        const { getFieldDecorator } = this.props.form;
-        const { modalInfo:{title,visible,...config} } = this.state;
-        return(
+    render() {
+        const {getFieldDecorator} = this.props.form;
+        const {modalInfo: {title, visible, ...config}} = this.state;
+        const {login_result, location} = this.props;
+        return (
             <div className={style.wrapper}>
+                {login_result.loading && <Loading/>}
                 <div className={style.container}>
                     <Form onSubmit={this.handleSubmit} className={style['login-form']}>
                         <Form.Item>
-                            {getFieldDecorator('email', {
-                                rules: [{ required: true, message: '请输入邮箱' }],
+                            {getFieldDecorator('username', {
+                                rules: [{required: true, message: '请输入用户名'}],
+                                initialValue: location.state ? location.state.userName : ''
                             })(
                                 <Input
-                                    prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                                    placeholder="邮箱"
+                                    prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                    placeholder="用户名"
+                                    autoComplete="off"
                                 />,
                             )}
                         </Form.Item>
                         <Form.Item>
                             {getFieldDecorator('password', {
-                                rules: [{ required: true, message: '请输入密码' }],
+                                rules: [{required: true, message: '请输入密码'}],
+                                initialValue: location.state ? location.state.password : ''
                             })(
                                 <Input.Password
-                                    prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                                    prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>}
                                     type="password"
                                     placeholder="密码"
+                                    autoComplete="off"
                                 />,
                             )}
                         </Form.Item>
@@ -123,12 +158,14 @@ class Login extends Component<Props,State>{
                         <div>还不是saloer用户 <a href="" onClick={() => this.toPage('/register')}>立即注册</a></div>
                     </Form>
                 </div>
-                <CopyRight />
+                <CopyRight/>
                 <Modal
                     title={title}
                     visible={visible}
                     onCancel={this.modalClose}
                     {...config}
+                    closable={false}
+                    maskClosable={false}
                 >
                     <div className={style['platform-switch']}>
                         <div className={style['platform-cell']} onClick={() => this.toPage('/FE/home')}>
@@ -146,21 +183,40 @@ class Login extends Component<Props,State>{
     }
 }
 
-const mapStateToProps:any = state => ({
-    login_result: state.login_result
+const mapStateToProps: any = state => ({
+    login_result: state.login_result,
+    user_menu_list: state.user_menu_list
 });
 
-const mapDispatchToProps:any = dispatch => ({
+const mapDispatchToProps: any = dispatch => ({
     login: param => {
         dispatch({
             type: 'login',
             payload: param
         });
+    },
+    get_menu_by_user_id: param => {
+        dispatch({
+            type: 'get_menu_by_user_id',
+            payload: param
+        })
+    },
+    get_user_from_local: (user: any) => {
+        dispatch({
+            type: 'get_user_from_local',
+            payload: user
+        })
+    },
+    get_menu_from_local: (menu: any) => {
+        dispatch({
+            type: 'get_menu_from_local',
+            payload: menu
+        })
     }
 });
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(withRouter(Form.create({ name: 'login' })(Login)));
+)(withRouter(Form.create({name: 'login'})(Login)));
 

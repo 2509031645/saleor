@@ -31,18 +31,11 @@ class Register extends Component<Props, State> {
         this.props.form.validateFields((errList, fieldList) => {
             if (!errList) {
                 const {password_retype} = fieldList;
-                if(password_retype !== fieldList.password){
+                if (password_retype !== fieldList.password) {
                     message.warn('两次输入的密码不一致');
                     return;
                 }
-                    this.props.register({
-                    "operationName": "RegisterCutomer",
-                    "query": query.register,
-                    variables: {
-                        email: fieldList.email,
-                        password: fieldList.password
-                    }
-                })
+                this.props.register(fieldList)
             }
         });
     };
@@ -51,8 +44,12 @@ class Register extends Component<Props, State> {
         if (nextProps.register_result && nextProps.register_result.status === 'success') {
             message.success('注册成功，即将跳转登录页');
             setTimeout(() => {
-                this.props.history.push('/');
-            },2000);
+                const {username, password} = this.props.form.getFieldsValue();
+                this.props.history.push('/',{
+                    userName:username,
+                    password
+                });
+            }, 2000);
         }
         // return super.componentWillReceiveProps(nextProps, nextContext);
     }
@@ -68,12 +65,15 @@ class Register extends Component<Props, State> {
                 <div className={style.container}>
                     <Form onSubmit={this.handleSubmit} className={style['login-form']}>
                         <Form.Item>
-                            {getFieldDecorator('email', {
-                                rules: [{required: true, message: '请输入邮箱'}],
+                            {getFieldDecorator('username', {
+                                rules: [
+                                    {required: true, message: '请输入用户名'},
+                                    {pattern: /^[a-zA-Z0-9_-]{4,16}$/, message: '请输入合法用户名'}
+                                ]
                             })(
                                 <Input
                                     prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                    placeholder="邮箱"
+                                    placeholder="4~16个字符，不可输入特殊字符"
                                 />,
                             )}
                         </Form.Item>

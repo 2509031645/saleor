@@ -131,3 +131,10 @@ export const dateCaculator = ({searchType, formatType = 'YYYY-MM-DD', returnArra
     }
     return returnArray ? date : date[0];
 };
+
+// 获取base64数据
+export const getBase64 = (img, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+};

@@ -7,10 +7,13 @@
 import React, {Component} from 'react';
 import {connect} from "react-redux";
 import style from './index.module.scss';
-import {withRouter, RouterHistory} from "react-router-dom";
+import {withRouter} from "react-router-dom";
+import type {RouterHistory} from "react-router-dom";
 
 type Props = {
-    history: RouterHistory
+    history: RouterHistory,
+    logout(): void,
+    login_result: any
 }
 
 type State = {
@@ -24,21 +27,24 @@ class UserInfo extends Component<Props,State>{
         }
     }
 
+
     logout = () => {
-        this.props.logout({test:'abc'});
-        this.props.history.push('/login')
+        this.props.logout();
+        localStorage.removeItem('user_info');
+        localStorage.removeItem('user_menu_list');
     };
 
-    componentWillReceiveProps(nextProps: Props, nextContext: *): * {
-        // fixme: 更具redux返回的状态去判断是否跳转登录页
-        // return super.componentWillReceiveProps(nextProps, nextContext);
+    componentWillMount(): void {
+        // this.props.get_user_from_local(JSON.parse(localStorage.getItem('user_info')))
     }
 
+
+
     render(){
-        console.log(this.props);
+        const {login_result} = this.props;
         return (
             <div>
-                <b>2509031645@qq.com</b>
+                <b>{login_result.data.msg.username}</b>
                 <span className={style['exit-btn']} onClick={this.logout}>退出登录</span>
             </div>
         )
@@ -50,11 +56,16 @@ const mapStateToProps:any = state => ({
 });
 
 const mapDispatchToProps:any = dispatch => ({
-    logout: param => {
+    logout: () => {
         dispatch({
-            type: 'logout',
-            payload: param
+            type: 'logout'
         });
+    },
+    get_user_from_local: (user: any) => {
+        dispatch({
+            type: 'get_user_from_local',
+            payload: user
+        })
     }
 });
 

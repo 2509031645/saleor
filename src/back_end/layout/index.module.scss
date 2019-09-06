@@ -18,23 +18,44 @@
   margin: 16px;
 }
 
-.header{
+.header {
   background: white;
   padding: {
-    top:0;
-    bottom:0;
-    left:0;
-    right:24px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 24px;
   };
-  @include flex-center(row,space-between);
+  @include flex-center(row, space-between);
 }
-.content{
-  margin: 24px 16px;
+
+.content {
+  margin: 10px;
   padding: 24px;
   background: #fff;
   min-height: 280px;
 }
-.exit-btn{
+
+.bg {
+  &::before {
+    content: "";
+    /*-webkit-filter: opacity(50%);
+    filter: opacity(50%); */
+    background-image: url(/img/editor-072.jpg);
+    opacity: 0.2; //透明度设置
+    background-size: 500px 300px;
+    width: 500px;
+    height: 300px;
+    position: absolute;
+    bottom: 25px;
+    right: 0;
+    border-radius: 40px;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.exit-btn {
   color: $blue;
   margin-left: 10px;
   font-size: $text-weak-size;

@@ -9,8 +9,8 @@ export default {
         switch (action.type) {
             case "register_success":
                 return {
-                    status: "success",
-                    msg: ""
+                    status: action.payload.status,
+                    msg: action.payload.msg
                 };
             case "register_fail":
                 return {

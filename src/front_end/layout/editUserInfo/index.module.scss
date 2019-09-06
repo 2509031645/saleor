@@ -1,0 +1,18 @@
+@import "../../../common/style/common";
+
+.wrapper{
+  .title{
+    font-size: $text-title-size;
+    color: $text-title-color;
+    text-align: center;
+    border-bottom: 1px solid $gray;
+    line-height: 36px;
+    font-weight: bold;
+  }
+  .btn-group{
+    border-top: 1px solid $gray;
+    @include flex-center();
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+}
