@@ -6,7 +6,7 @@
   "dependencies": {
     "animate.css": "^3.7.2",
     "antd": "^3.22.0",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "china-division": "^2.2.0",
     "moment": "^2.24.0",
     "node-sass": "^4.12.0",
